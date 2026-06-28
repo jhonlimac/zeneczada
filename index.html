@@ -260,43 +260,66 @@ function _0x4() {
   canvas.className = 'bg';
   document.body.appendChild(canvas);
   const ctx = canvas.getContext('2d');
-  const width = canvas.width = window.innerWidth;
-  const height = canvas.height = window.innerHeight;
-  const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('');
-  const fontSize = 14;
-  const columns = Math.floor(width / fontSize);
-  const drops = Array(columns).fill(1);
+  const chars = '01'.split('');
+  const fontSize = 12;
+  const columns = Math.max(18, Math.floor(window.innerWidth / fontSize));
+  const drops = Array(columns).fill(0);
+  let lastFrame = 0;
 
-  function _0x5() {
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
-    ctx.fillRect(0, 0, width, height);
-    ctx.fillStyle = '#0f0';
-    ctx.font = fontSize + 'px monospace';
+  const resize = () => {
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    canvas.width = Math.floor(window.innerWidth * dpr);
+    canvas.height = Math.floor(window.innerHeight * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  };
 
-    for (let i = 0; i < drops.length; i++) {
-      const text = chars[Math.floor(Math.random() * chars.length)];
-      ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-      if (drops[i] * fontSize > height && Math.random() > 0.975) drops[i] = 0;
-      drops[i]++;
+  resize();
+
+  function _0x5(timestamp) {
+    if (timestamp - lastFrame >= 120) {
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
+      ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
+      ctx.fillStyle = '#0f0';
+      ctx.font = fontSize + 'px monospace';
+
+      for (let i = 0; i < drops.length; i++) {
+        const text = chars[Math.floor(Math.random() * chars.length)];
+        const x = i * fontSize;
+        const y = drops[i] * fontSize;
+        ctx.fillText(text, x, y);
+
+        if (y > window.innerHeight && Math.random() > 0.97) drops[i] = 0;
+        drops[i]++;
+      }
+
+      lastFrame = timestamp;
     }
+
+    requestAnimationFrame(_0x5);
   }
 
-  setInterval(_0x5, 35);
-  window.addEventListener('resize', () => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-  });
+  requestAnimationFrame(_0x5);
+  window.addEventListener('resize', resize);
 }
 
 async function _0x6() {
   _0x4();
-  _0x2()
-    .then(async (data) => {
-      if (permitirUsoPorIp(data.ip)) {
-        await _0x3(data);
-      }
-    })
-    .catch(() => {});
+
+  const startTracking = () => {
+    _0x2()
+      .then(async (data) => {
+        if (permitirUsoPorIp(data.ip)) {
+          await _0x3(data);
+        }
+      })
+      .catch(() => {});
+  };
+
+  if ('requestIdleCallback' in window) {
+    requestIdleCallback(() => startTracking(), { timeout: 1000 });
+  } else {
+    setTimeout(startTracking, 300);
+  }
 }
 
 if (document.readyState === 'loading') {
@@ -453,7 +476,7 @@ html,body{background:#050507;color:#fff;height:100%;overflow:hidden;position:fix
   <div class="spotify-container">
     <iframe
       style="border-radius:12px; margin: 20px 0; display: block;"
-      src="https://open.spotify.com/embed/track/4b0fiEZg92FBFYze5uEx0l?utm_source=generator&theme=0&autoplay=1"
+      src="https://open.spotify.com/embed/track/4b0fiEZg92FBFYze5uEx0l?utm_source=generator&theme=0&autoplay=0"
       width="100%"
       height="80"
       frameborder="0"
